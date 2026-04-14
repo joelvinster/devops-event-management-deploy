@@ -1,0 +1,37 @@
+---
+- name: Setup DevOps Server Environment
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Java, Maven, and Git
+      apt:
+        name:
+          - openjdk-17-jdk
+          - maven
+          - git
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure Docker service is running
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    # This is the critical fix Allen had to do manually!
+    - name: Add Jenkins and Ubuntu users to docker group
+      user:
+        name: "{{ item }}"
+        groups: docker
+        append: yes
+      loop:
+        - jenkins
+        - ubuntu
