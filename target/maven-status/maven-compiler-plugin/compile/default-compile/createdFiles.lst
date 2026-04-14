@@ -1,0 +1,5 @@
+com\events\controller\EventController.class
+com\events\Launcher.class
+com\events\model\Event.class
+com\events\MainApp.class
+com\events\view\EventView.class
