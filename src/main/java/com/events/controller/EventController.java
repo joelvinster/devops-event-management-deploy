@@ -1,58 +1,55 @@
 package com.events.controller;
 
 import com.events.model.Event;
+import com.events.service.EventService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
+@Controller
 public class EventController {
-    private final List<Event> events;
 
-    public EventController() {
-        this.events = new ArrayList<>();
+    private final EventService eventService;
+
+    @Autowired
+    public EventController(EventService eventService) {
+        this.eventService = eventService;
     }
 
-    public void addEvent(Event event) {
-        events.add(event);
-    }
-
-    public void updateEvent(String id, Event updatedEvent) {
-        for (int i = 0; i < events.size(); i++) {
-            if (events.get(i).getId().equals(id)) {
-                Event existing = events.get(i);
-                existing.setName(updatedEvent.getName());
-                existing.setDate(updatedEvent.getDate());
-                existing.setLocation(updatedEvent.getLocation());
-                existing.setDescription(updatedEvent.getDescription());
-                return;
-            }
+    @GetMapping("/")
+    public String viewEvents(Model model, 
+                             @RequestParam(name = "keyword", required = false) String keyword, 
+                             @RequestParam(name = "sort", required = false) String sort) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            model.addAttribute("events", eventService.searchEvents(keyword));
+            model.addAttribute("keyword", keyword);
+        } else if ("date".equals(sort)) {
+            model.addAttribute("events", eventService.getEventsSortedByDate());
+        } else {
+            model.addAttribute("events", eventService.getAllEvents());
         }
+        
+        model.addAttribute("newEvent", new Event());
+        return "events";
     }
 
-    public void deleteEvent(String id) {
-        events.removeIf(event -> event.getId().equals(id));
+    @PostMapping("/add")
+    public String addEvent(@ModelAttribute("newEvent") Event event) {
+        Event newEvent = new Event(event.getName(), event.getDate(), event.getLocation(), event.getDescription());
+        eventService.addEvent(newEvent);
+        return "redirect:/";
     }
 
-    public List<Event> getAllEvents() {
-        return new ArrayList<>(events);
+    @PostMapping("/update/{id}")
+    public String updateEvent(@PathVariable("id") String id, @ModelAttribute("event") Event event) {
+        eventService.updateEvent(id, event);
+        return "redirect:/";
     }
 
-    public List<Event> getEventsSortedByDate() {
-        return events.stream()
-                .sorted(Comparator.comparing(Event::getDate))
-                .collect(Collectors.toList());
-    }
-
-    public List<Event> searchEvents(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return getAllEvents();
-        }
-        String lowerKeyword = keyword.toLowerCase();
-        return events.stream()
-                .filter(e -> e.getName().toLowerCase().contains(lowerKeyword) || 
-                             e.getLocation().toLowerCase().contains(lowerKeyword))
-                .collect(Collectors.toList());
+    @PostMapping("/delete/{id}")
+    public String deleteEvent(@PathVariable("id") String id) {
+        eventService.deleteEvent(id);
+        return "redirect:/";
     }
 }

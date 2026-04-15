@@ -1,14 +1,21 @@
 package com.events.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.util.UUID;
 
 public class Event {
     private String id;
     private String name;
+    
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private String location;
     private String description;
+
+    public Event() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     public Event(String name, LocalDate date, String location, String description) {
         this.id = UUID.randomUUID().toString();

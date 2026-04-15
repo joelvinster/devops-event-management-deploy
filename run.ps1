@@ -16,5 +16,3 @@ if (-not (Test-Path "$mavenDir/apache-maven-3.9.6/bin/mvn.cmd")) {
 Write-Host "Building project with Maven..."
 & .\.maven\apache-maven-3.9.6\bin\mvn.cmd clean package
 
-Write-Host "Starting Event Management Application..."
-java -jar target/event-management-system-1.0-SNAPSHOT.jar
