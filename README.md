@@ -1,31 +1,34 @@
-# Event Management System
+# 🛡️ End-to-End DevSecOps & Cloud Infrastructure: Event Management System
 
-## Overview
-A lightweight, modern Event Management System built with Java 17, Maven, and JavaFX.
-Features a clean GUI driven by the MVC architecture pattern.
+## 🌟 Project Overview
+This project is a professional-grade **Event Management System** built with **Java 17**. It demonstrates a complete "Code-to-Cloud" workflow, integrating Infrastructure as Code (IaC), Automated Configuration, Containerization, and Security Auditing.
 
-## Prerequisites
-- Java Development Kit 17 (or newer)
-- Maven 3.6+
+---
 
-## How to Build and Run
-1. Navigate to the root directory `event-management-system`.
-2. Package the application into a single executable Fat JAR using Maven:
-   ```bash
-   mvn clean package
-   ```
-3. Run the compiled executable JAR file:
-   ```bash
-   java -jar target/event-management-system-1.0-SNAPSHOT.jar
-   ```
+## 🏗️ 1. Infrastructure as Code (IaC) & Automation
+We don't manually set up servers. We use automation to ensure the environment is reproducible and stable:
+* **Terraform:** Used to provision AWS resources (EC2 instances, Security Groups, and VPCs) automatically.
+* **Ansible:** Used for configuration management to install Docker, Java 17, and set up the Linux environment on the EC2 instance.
 
-## Features
-- **Create Event**: Supply Event Name, Date, Location, and Description.
-- **View Events**: Tabular visualization using JavaFX `TableView`.
-- **Update Event**: Selecting an entry populates the form for easy editing.
-- **Delete Event**: One-click removal of selected events.
-- **Search Events**: Live filtering by keyword (Location, Name).
-- **Sort Events**: One-click chronological sorting from earliest to latest.
+## 🚀 2. DevOps & CI/CD Pipeline
+* **Docker:** The application is containerized for portability. We use multi-stage builds to keep the image size small and secure.
+* **Jenkins:** (Referencing `Jenkinsfile`) Our pipeline automates the building of the JAR file and the creation of the Docker image.
+* **Monitoring:** Integrated with **Prometheus** and **Grafana** to monitor server metrics and application health in real-time.
 
-## DevOps Ready
-The underlying `pom.xml` configurations leverage `maven-shade-plugin` to assemble all necessary JavaFX dependencies into a single runnable execution layer, fully severing runtime requirement complexities for cross-platform availability. Ideal for containerization implementations.
+## 🛡️ 3. DevSecOps (Security First)
+Security is shifted left in our pipeline using **Trivy**:
+* **Vulnerability Scanning:** Every build is scanned for known CVEs.
+* **Scan Results:** ✅ **PASSED** (0 Critical, 0 High vulnerabilities found).
+* **Audit Log:** See `trivy_report.txt` for the full security breakdown.
+
+---
+
+## 🔧 Deployment Steps
+
+### Step 1: Provision & Configure
+```bash
+# Deploy AWS Infrastructure
+cd infrastructure/terraform && terraform apply 
+
+# Configure the Server
+cd infrastructure/ansible && ansible-playbook setup.yml
